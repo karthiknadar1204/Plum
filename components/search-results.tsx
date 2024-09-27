@@ -21,13 +21,13 @@ export function SearchResults({ results }: SearchResultsProps) {
   const additionalResultsCount = results.length > 3 ? results.length - 3 : 0
 
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap bg-gray-900">
       {displayedResults.map((result: any, index: any) => (
         <div className="w-1/2 md:w-1/4 p-1" key={index}>
           <Link href={result.url} passHref target="_blank">
-            <Card className="flex-1 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="flex-1 bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 border-gray-700">
               <CardContent className="p-2">
-                <p className="text-xs line-clamp-2 text-foreground dark:text-white">{result.content}</p>
+                <p className="text-xs line-clamp-2 text-gray-300">{result.content}</p>
                 <div className="mt-2 flex items-center space-x-2">
                   <Avatar className="h-4 w-4">
                     <AvatarImage
@@ -36,11 +36,11 @@ export function SearchResults({ results }: SearchResultsProps) {
                       }`}
                       alt={result.author}
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-gray-700 text-gray-300">
                       {new URL(result.url).hostname[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="text-xs text-muted-foreground dark:text-gray-400 truncate">
+                  <div className="text-xs text-gray-500 truncate">
                     {new URL(result.url).hostname}
                   </div>
                 </div>
@@ -51,11 +51,11 @@ export function SearchResults({ results }: SearchResultsProps) {
       ))}
       {!showAllResults && additionalResultsCount > 0 && (
         <div className="w-1/2 md:w-1/4 p-1">
-          <Card className="flex-1 flex h-full items-center justify-center bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <Card className="flex-1 flex h-full items-center justify-center bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300 border-gray-700">
             <CardContent className="p-2">
               <Button
                 variant={'ghost'}
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
+                className="text-blue-400 hover:text-blue-300 transition-colors duration-300"
                 onClick={handleViewMore}
               >
                 View {additionalResultsCount} more

@@ -63,85 +63,60 @@ export function ChatPanel() {
     inputRef.current?.focus()
   }, [])
 
-  if (messages.length > 0 && !isButtonPressed) {
-    return (
-      <div className="fixed bottom-4 md:bottom-8 left-0 right-0 flex flex-col justify-center items-center mx-auto">
-        {showFollowupPanel && <FollowupPanel />}
-        <Button
-          type="button"
-          variant={'secondary'}
-          className="rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 group transition-all duration-300 hover:scale-105 mt-4"
-          onClick={() => handleClear()}
-        >
-          <span className="text-sm mr-2 group-hover:block hidden animate-in fade-in duration-300">
-            New Chat
-          </span>
-          <Plus size={18} className="group-hover:rotate-90 transition-all duration-300" />
-        </Button>
-      </div>
-    )
-  }
-
   const formPositionClass =
     messages.length === 0
-      ? 'fixed inset-0 flex items-center justify-center bg-gradient-to-b from-blue-50 to-white dark:from-blue-900 dark:to-gray-900'
-      : 'fixed bottom-4 md:bottom-8 left-0 right-0 mx-auto'
+      ? 'fixed inset-0 flex items-center justify-center bg-gradient-to-b from-gray-900 to-black'
+      : 'fixed bottom-20 md:bottom-24 left-0 right-0 mx-auto'
 
   return (
-    <div className={formPositionClass}>
-      <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6">
-        <div className="relative flex items-center w-full">
-          <Input
-            ref={inputRef}
-            type="text"
-            name="input"
-            placeholder="Ask a question..."
-            value={input}
-            className="pl-6 pr-12 py-4 h-14 rounded-full bg-white dark:bg-gray-800 shadow-md focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 transition-all duration-300"
-            onChange={e => {
-              setInput(e.target.value)
-              setShowEmptyScreen(e.target.value.length === 0)
-            }}
-            onFocus={() => setShowEmptyScreen(true)}
-            onBlur={() => setShowEmptyScreen(false)}
-          />
-          <Button
-            type="submit"
-            size={'icon'}
-            variant={'ghost'}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors duration-300"
-            disabled={input.length === 0}
-          >
-            <ArrowRight size={20} />
-          </Button>
+    <>
+      <div className={formPositionClass}>
+        {messages.length === 0 ? (
+          <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6">
+            <div className="relative flex items-center w-full">
+              <Input
+                ref={inputRef}
+                type="text"
+                name="input"
+                placeholder="Ask a question..."
+                value={input}
+                className="pl-6 pr-12 py-4 h-14 rounded-full bg-gray-800 text-white shadow-md focus:ring-2 focus:ring-gray-600 transition-all duration-300"
+                onChange={e => {
+                  setInput(e.target.value)
+                  setShowEmptyScreen(e.target.value.length === 0)
+                }}
+                onFocus={() => setShowEmptyScreen(true)}
+                onBlur={() => setShowEmptyScreen(false)}
+              />
+              <Button
+                type="submit"
+                size={'icon'}
+                variant={'ghost'}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2 hover:bg-gray-600 transition-colors duration-300"
+                disabled={input.length === 0}
+              >
+                <ArrowRight size={20} />
+              </Button>
+            </div>
+            <EmptyScreen
+              submitMessage={message => {
+                setInput(message)
+              }}
+              className={cn(showEmptyScreen ? 'visible mt-6 animate-fade-in' : 'invisible')}
+            />
+          </form>
+        ) : null}
+      </div>
+      {showFollowupPanel && (
+        <div className="fixed bottom-0 left-0 right-0 p-4">
+          <FollowupPanel onNewChat={handleClear} />
         </div>
-        <EmptyScreen
-          submitMessage={message => {
-            setInput(message)
-          }}
-          className={cn(showEmptyScreen ? 'visible mt-6 animate-fade-in' : 'invisible')}
-        />
-      </form>
-    </div>
+      )}
+    </>
   )
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function FollowupPanel() {
+function FollowupPanel({ onNewChat }: { onNewChat: () => void }) {
   const [input, setInput] = useState('')
   const { submit } = useActions<typeof AI>()
   const [, setMessages] = useUIState<typeof AI>()
@@ -169,25 +144,36 @@ function FollowupPanel() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex items-center space-x-1 w-full max-w-2xl"
+      className="relative flex items-center space-x-1 w-full max-w-2xl mx-auto"
     >
       <Input
         type="text"
         name="input"
         placeholder="Ask a follow-up question..."
         value={input}
-        className="pr-14 h-12"
+        className="pr-28 h-12 bg-gray-900 text-white border-gray-700"
         onChange={e => setInput(e.target.value)}
       />
-      <Button
-        type="submit"
-        size={'icon'}
-        disabled={input.length === 0}
-        variant={'ghost'}
-        className="absolute right-1"
-      >
-        <ArrowRight size={20} />
-      </Button>
+      <div className="absolute right-1 flex space-x-1">
+        <Button
+          type="submit"
+          size={'icon'}
+          disabled={input.length === 0}
+          variant={'ghost'}
+          className="bg-gray-800 text-white hover:bg-gray-700"
+        >
+          <ArrowRight size={20} />
+        </Button>
+        <Button
+          type="button"
+          size={'icon'}
+          variant={'ghost'}
+          className="bg-gray-800 text-white hover:bg-gray-700"
+          onClick={onNewChat}
+        >
+          <Plus size={20} />
+        </Button>
+      </div>
     </form>
   )
 }

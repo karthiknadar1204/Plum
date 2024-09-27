@@ -47,15 +47,15 @@ export const SearchRelated: React.FC<SearchRelatedProps> = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap">
+    <form onSubmit={handleSubmit} className="flex flex-wrap bg-gray-900 p-4 rounded-lg">
       {data?.items
         ?.filter(item => item?.query !== '')
         .map((item, index) => (
           <div className="flex items-start w-full" key={index}>
-            <ArrowRight className="h-4 w-4 mr-2 mt-1 flex-shrink-0 text-accent-foreground/50" />
+            <ArrowRight className="h-4 w-4 mr-2 mt-1 flex-shrink-0 text-gray-400" />
             <Button
               variant="link"
-              className="flex-1 justify-start px-0 py-1 h-fit font-semibold text-accent-foreground/50 whitespace-normal text-left"
+              className="flex-1 justify-start px-0 py-1 h-fit font-semibold text-gray-300 hover:text-white whitespace-normal text-left transition-colors duration-200"
               type="submit"
               name={'related_query'}
               value={item?.query}

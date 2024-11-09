@@ -202,6 +202,94 @@ graph TD
     J --> K[Final Response]
 
 
+## AI State Management
+  const initialAIState: {
+    role: 'user' | 'assistant' | 'system' | 'function' | 'tool'
+    content: string
+    id?: string
+    name?: string
+  }[] = []
+
+The application maintains an initialAIState array that stores messages with their
+roles (user/assistant/system). This serves as the conversation history.
+
+
+## Mutable AI State
+    const aiState = getMutableAIState<typeof AI>()
+    const uiStream = createStreamableUI()
+    const isGenerating = createStreamableValue(true)
+  
+    const messages: ExperimentalMessage[] = aiState.get() as any
+    const userInput = skip? `{"action": "skip"}`: (formData?.get('input') as string)
+    const content = skip? userInput: formData? JSON.stringify(Object.fromEntries(formData)): null
+    if (content) {
+      const message = { role: 'user', content }
+      messages.push(message as ExperimentalMessage)
+      aiState.update([...(aiState.get() as any), message])
+
+In the submit function, getMutableAIState is used to access and update the conversation state.
+New messages are appended to the existing state using:
+
+- Gets current messages
+- Adds new user message
+- Updates state with the combined messages
+
+
+
+## UI State Management
+  const [messages, setMessages] = useUIState<typeof AI>()
+  const [aiMessages, setAiMessages] = useAIState<typeof AI>()
+
+The ChatPanel component maintains two state arrays using hooks:
+- useUIState for visual messages
+- useAIState for the AI conversation history
+
+
+## Messages rendered in ChatPanel
+export function ChatMessages() {
+  const [messages, setMessages] = useUIState<typeof AI>()
+
+  return (
+    <>
+      {messages.map((message: { id: number; component: React.ReactNode }) => (
+        <div key={message.id}>{message.component}</div>
+      ))}
+    </>
+  )
+}
+
+The ChatMessages component renders all messages from the UI state, maintaining the visual conversation
+flow.
+
+
+
+
+## State Updates During Interactions
+    setMessages(currentMessages => [
+      ...currentMessages,
+      {
+        id: Date.now(),
+        isGenerating: false,
+        component: <UserMessage message={input} />
+      }
+    ])
+
+    const formData = new FormData(e.currentTarget)
+    const responseMessage = await submit(formData)
+    setMessages(currentMessages => [...currentMessages, responseMessage as any])
+
+The message is added to UI state
+The message is processed through the AI
+The response is added back to both UI and AI states
+The key points about context maintenance are:
+The application maintains two parallel states:
+AI State: For maintaining the actual conversation history used by the AI
+UI State: For rendering the visual representation of the conversation
+Context is preserved through:
+Persistent state management using getMutableAIState
+Continuous appending of messages to existing state arrays
+Synchronization between UI and AI states
+
 
 
 

@@ -12,8 +12,7 @@ const fontSans = FontSans({
 })
 
 const title = 'PlumAI'
-const description =
-  'A open-source AI-powered answer engine with a generative UI.'
+const description ='A open-source AI-powered answer engine with a generative UI.'
 
 export const metadata: Metadata = {
   title,

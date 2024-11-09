@@ -17,14 +17,8 @@ import {
     const isGenerating = createStreamableValue(true)
   
     const messages: ExperimentalMessage[] = aiState.get() as any
-    const userInput = skip
-      ? `{"action": "skip"}`
-      : (formData?.get('input') as string)
-    const content = skip
-      ? userInput
-      : formData
-      ? JSON.stringify(Object.fromEntries(formData))
-      : null
+    const userInput = skip? `{"action": "skip"}`: (formData?.get('input') as string)
+    const content = skip? userInput: formData? JSON.stringify(Object.fromEntries(formData)): null
     if (content) {
       const message = { role: 'user', content }
       messages.push(message as ExperimentalMessage)
@@ -42,10 +36,7 @@ import {
   
         uiStream.done()
         isGenerating.done()
-        aiState.done([
-          ...aiState.get(),
-          { role: 'assistant', content: `inquiry: ${inquiry?.question}` }
-        ])
+        aiState.done([...aiState.get(), { role: 'assistant', content: `inquiry: ${inquiry?.question}` }])
         return
       }
   

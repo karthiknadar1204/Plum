@@ -12,20 +12,16 @@ export interface SearchRelatedProps {
   relatedQueries: PartialRelated
 }
 
-export const SearchRelated: React.FC<SearchRelatedProps> = ({
-  relatedQueries
-}) => {
+export const SearchRelated: React.FC<SearchRelatedProps> = ({ relatedQueries }) => {
   const { submit } = useActions<typeof AI>()
   const [, setMessages] = useUIState<typeof AI>()
-  const [data, error, pending] =
-    useStreamableValue<PartialRelated>(relatedQueries)
+  const [data, error, pending] = useStreamableValue<PartialRelated>(relatedQueries)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget as HTMLFormElement)
 
-    const submitter = (event.nativeEvent as SubmitEvent)
-      .submitter as HTMLInputElement
+    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLInputElement
     let query = ''
     if (submitter) {
       formData.append(submitter.name, submitter.value)
@@ -39,11 +35,7 @@ export const SearchRelated: React.FC<SearchRelatedProps> = ({
     }
 
     const responseMessage = await submit(formData)
-    setMessages(currentMessages => [
-      ...currentMessages,
-      userMessage,
-      responseMessage
-    ])
+    setMessages(currentMessages => [...currentMessages, userMessage, responseMessage])
   }
 
   return (

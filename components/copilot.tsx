@@ -21,9 +21,7 @@ export const Copilot: React.FC<CopilotProps> = ({ inquiry }: CopilotProps) => {
   const [query, setQuery] = useState('')
   const [skipped, setSkipped] = useState(false)
   const [data, error, pending] = useStreamableValue<PartialInquiry>(inquiry)
-  const [checkedOptions, setCheckedOptions] = useState<{
-    [key: string]: boolean
-  }>({})
+  const [checkedOptions, setCheckedOptions] = useState<{[key: string]: boolean}>({})
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [messages, setMessages] = useUIState<typeof AI>()
   const { submit } = useActions<typeof AI>()

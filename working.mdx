@@ -1,0 +1,238 @@
+graph TD
+    A[User submits query] --> B[submit function in action.tsx]
+    B --> C[researcher function]
+    C --> D[tavilySearch/exaSearch API call]
+    D --> E[Search results received]
+    E --> F[uiStream updates UI components]
+    F --> G[ChatMessages renders components]
+    G --> H[SearchResultsImageSection displays images]
+    G --> I[SearchResults displays links]
+
+
+
+
+## CreateAI
+
+The main function that creates an AI instance. It sets up:
+
+- Actions (like submit) that can be called
+- Initial UI state (what users see) 
+- Initial AI state (conversation history)
+
+Think of `createAI` like building a new toy robot:
+
+- The robot needs instructions (actions) to know what to do
+- It needs a face (UIState) so you can see what it's thinking
+- It needs a brain (AIState) to remember your conversations
+- When you create the robot, you give it all these things to start with
+
+
+
+
+
+
+createStreamableUI
+Used to create a stream of UI updates that can be modified in real-time. Think of it
+like a live video stream, but for UI components:
+
+eg:const uiStream = createStreamableUI()
+
+// Update UI immediately
+uiStream.update(<Component />)
+
+// Add more content
+uiStream.append(<AnotherComponent />)
+
+// Mark stream as complete
+uiStream.done()
+
+const uiStream = createStreamableUI()
+
+uiStream.update(<SearchResults results={searchResult.results} />)
+Imagine you're drawing a picture:
+createStreamableUI is like getting a magic paper that can change while you watch
+uiStream.update is like drawing something new on the paper
+uiStream.append is like adding more drawings to the bottom
+When you're done drawing, you say uiStream.done()
+
+
+
+
+
+
+
+createStreamableValue
+Creates a value that can be updated over time, useful for showing progress or streaming text:
+eg:
+const streamText = createStreamableValue<string>()
+
+// Update the value
+streamText.update("New text")
+
+// Mark as complete
+streamText.done()
+Think of this like a TV channel:
+createStreamableValue is like turning on your TV
+streamText.update is like changing what's showing on the TV
+The TV keeps showing new things as they come in
+When the show is over, you say streamText.done()
+
+
+
+
+
+getMutableAIState
+Gets a mutable version of the AI's state that can be updated:
+eg:
+const aiState = getMutableAIState<typeof AI>()
+
+// Get current state
+const currentState = aiState.get()
+
+// Update state
+aiState.update(newState)
+
+// Mark as complete
+aiState.done(finalState)
+
+const aiState = getMutableAIState<typeof AI>()
+aiState.update([...aiState.get(), newMessage])
+This is like a robot's memory:
+getMutableAIState is like opening the robot's memory box
+aiState.get() is like looking at what's in the memory
+aiState.update() is like putting new memories in
+aiState.done() is like closing the memory box when you're finished
+
+
+
+
+
+
+
+useUIState
+Imagine a whiteboard that everyone can see:
+useUIState is like getting permission to write on the whiteboard
+messages is what's currently written on the whiteboard
+setMessages is like getting a marker to write new things
+When you write something new, everyone can see it right away
+eg:
+const [messages, setMessages] = useUIState<typeof AI>()
+
+
+
+
+
+
+useAIState
+This is like the robot's private notebook:
+useAIState lets you read and write in the robot's notebook
+aiMessages shows what's written in the notebook
+setAiMessages lets you write new things in the notebook
+The robot uses this notebook to remember your conversations
+eg:
+const [aiMessages, setAiMessages] = useAIState<typeof AI>()
+
+
+
+
+useActions
+Think of this like the robot's control buttons:
+useActions gives you the remote control for the robot
+submit is like pressing the "talk" button
+When you press the button, the robot knows to do something
+It's how you tell the robot to start working
+eg:
+const { submit } = useActions<typeof AI>()
+
+
+
+experimental_streamText
+Imagine the robot is writing you a letter:
+Instead of waiting for the whole letter
+You can see each word as the robot writes it
+It's like watching someone write in real-time
+You don't have to wait until they're finished to start reading
+eg:
+const result = await experimental_streamText({
+  model: openai.chat('gpt-4-turbo'),
+  system: "You are a helpful assistant",
+  messages
+})
+
+
+experimental_streamObject
+This is like the robot building with blocks:
+The robot builds something piece by piece
+You can see each piece as it's added
+The schema is like instructions for what to build
+You watch it come together in real-time
+eg:
+await experimental_streamObject({
+  model: openai.chat('gpt-4-turbo'),
+  messages,
+  schema: relatedSchema
+})
+
+
+graph TD
+    A[You talk to robot] --> B[Robot listens]
+    B --> C[Robot thinks]
+    C --> D[Robot starts answering]
+    D --> E[You see answer appear]
+    E --> F[Robot remembers conversation]
+
+
+It's like having a conversation with a friend who:
+Listens to you (useActions)
+Thinks about what you said (AIState)
+Shows you their answer as they think (StreamableUI)
+Remembers what you talked about (MutableAIState)
+Keeps showing you new things (StreamableValue)
+
+graph TD
+    A[User Input] --> B[createAI/submit]
+    B --> C[getMutableAIState]
+    C --> D[TaskManager]
+    D -->|Need more info| E[Inquire]
+    D -->|Proceed| F[Researcher]
+    F --> G[Search APIs]
+    G --> H[StreamableUI Updates]
+    H --> I[Display Results]
+    I --> J[QuerySuggestor]
+    J --> K[Final Response]
+
+
+
+
+
+
+
+
+User Input Flow:
+graph TD
+    A[User Input] --> B[ChatPanel]
+    B --> C[submit action]
+    C --> D[AI Processing]
+    D --> E[Streaming Response]
+    E --> F[UI Updates]
+
+
+
+
+State Management Flow:
+graph TD
+    A[User Action] --> B[useUIState]
+    A --> C[useAIState]
+    B --> D[getMutableAIState]
+    C --> D
+    D --> E[State Updates]
+    E --> F[UI Rendering]
+
+
+Streaming Updates Flow:
+graph TD
+    A[AI Response] --> B[experimental_streamText]
+    B --> C[createStreamableValue]
+    C --> D[uiStream.update]
+    D --> E[Component Updates]
+    E --> F[User Sees Results]

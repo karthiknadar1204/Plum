@@ -13,7 +13,9 @@ export function BotMessage({
   if (error) return <div>Error</div>
 
   return (
-    <MemoizedReactMarkdown className="prose-sm prose-neutral prose-a:text-accent-foreground/50">
+    <MemoizedReactMarkdown 
+      className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-none break-words"
+    >
       {data}
     </MemoizedReactMarkdown>
   )

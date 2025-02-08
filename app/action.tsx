@@ -40,6 +40,7 @@ import {
         return
       }
   
+      
       let answer = ''
       const streamText = createStreamableValue<string>()
       while (answer.length === 0) {
@@ -85,3 +86,4 @@ import {
     initialUIState,
     initialAIState
   })
+  
